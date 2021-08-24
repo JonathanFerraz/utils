@@ -11,3 +11,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.test {
+  margin: 100px;
+  border: 1px solid rgb(9, 113, 241);
+  background-color: rgb(9, 113, 241, 0.2);
+  width: 100px;
+  height: 50px;
+  padding: 10px;
+  position: relative;
+  text-align: center;
+  user-select: none;
+}

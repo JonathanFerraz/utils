@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react-jsx",
     "target": "es5",
     "lib": [
       "dom",
@@ -17,10 +18,14 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "experimentalDecorators": true,
+    "baseUrl": "./",
+    "noErrorTruncation": true,
+    "noEmit": true
   },
   "include": [
-    "src"
+    "src",
+    "docs",
+    "scripts"
   ]
 }
