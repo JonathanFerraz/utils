@@ -1,72 +1,126 @@
-import React, { useEffect } from 'react';
-import { getYoutubeId } from '../../../utils';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { YoutubeEmbed } from './YoutubeEmbed';
+import urlParser from 'js-video-url-parser';
+import Draggable from 'react-draggable';
+import styled from '@emotion/styled';
 
-declare const window: any;
+import './styles.scss';
 
-const Player: React.FC = () => {
-  const useYoutube = (callback: any) => {
-    useEffect(() => {
-      if (!window.YT) {
-        let tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/player_api';
-        let firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
-        tag.onload = callback;
-      } else {
-        callback();
-      }
-    }, [callback]);
+export const YOUTUBE_PROVIDER = 'youtube';
+export const VIMEO_PROVIDER = 'vimeo';
+
+export interface PlayerVideoInfo {
+  mediaType: string;
+  id: string;
+  provider: string;
+}
+
+export interface PlayerParserResult extends VideoInfo {
+  list?: string;
+  params?: any;
+}
+
+interface PlayerProps {
+  id?: string;
+  url: string;
+  autoPlay?: boolean;
+  raw?: boolean;
+  allowPositioning?: boolean;
+}
+
+type BoxProps = {
+  isControlled?: boolean;
+};
+
+const Box = styled.div<BoxProps>`
+  cursor: move;
+  transition: ${(props: any) =>
+    props.isControlled ? `transform 0.3s` : `none`};
+`;
+
+const Player: React.FC<PlayerProps> = ({
+  url,
+  autoPlay,
+  raw,
+  allowPositioning,
+  id,
+}) => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isControlled, setIsControlled] = useState(true);
+
+  const playerRef = useRef<null | HTMLDivElement>(null);
+
+  const handleStart = () => {
+    setIsControlled(false);
+  };
+  const handleDrag = (e: any, data: any) => {
+    setPosition({ x: data.x, y: data.y });
+  };
+  const handleStop = () => {
+    setIsControlled(true);
+    setPosition({ x: 0, y: 0 });
   };
 
-  let player: any = [{}];
-  const onYouTubePlayerAPIReady = () => {
-    Array.from(document.querySelectorAll('iframe'))
-      .filter((x: any) => x.classList[0] === 'youtube-embed-embed')
-      .map((x: any, index: number) => {
-        if (!x.id) {
-          x.id = 'youtube-player-' + index;
-        }
+  const parserResult = useMemo<PlayerParserResult>(() => {
+    return urlParser.parse(url);
+  }, [url]);
 
-        window.YT.ready(() => {
-          player[index] = new window.YT.Player(x.id, {
-            events: {
-              onReady: onPlayerReady,
-              videoId: getYoutubeId(x.src),
-              onStateChange: (event: any) => {
-                if (event.data === window.YT.PlayerState.PLAYING) {
-                  player.map((x: any) => {
-                    if (
-                      x.playerInfo.playerState ===
-                        window.YT.PlayerState.PLAYING &&
-                      x.h.id !== event.target.h.id
-                    ) {
-                      x.h.contentWindow.postMessage(
-                        '{"event":"command","func":"pauseVideo","args":""}',
-                        '*'
-                      );
-                    }
-                  });
-                }
-              },
-            },
-          });
+  const videoId = useMemo<string | null>(() => {
+    return !!parserResult ? parserResult.id : null;
+  }, [parserResult]);
 
-          function onPlayerReady() {
-            const pauseButton: any = document.getElementById('pause-button');
+  const videoProvider = useMemo<string | null>(() => {
+    return !!parserResult ? parserResult.provider : null;
+  }, [parserResult]);
 
-            pauseButton.addEventListener('click', function () {
-              player[index].pauseVideo();
-            });
-          }
-        });
+  if (!parserResult || !videoId || !videoProvider) {
+    return <span></span>;
+  }
 
-        return x;
-      });
-  };
-
-  useYoutube(onYouTubePlayerAPIReady);
-
-  return <div />;
+  switch (videoProvider) {
+    case YOUTUBE_PROVIDER:
+      // case VIMEO_PROVIDER:
+      return (
+        <>
+          {allowPositioning ? (
+            <Draggable
+              defaultPosition={{ x: 0, y: 0 }}
+              position={position}
+              onStart={handleStart}
+              onDrag={handleDrag}
+              // onStop={handleStop}
+              defaultClassName={'drag'}
+            >
+              <Box isControlled={isControlled}>
+                <div className={'wrapper-player'} ref={playerRef}>
+                  {videoProvider === YOUTUBE_PROVIDER && (
+                    <YoutubeEmbed
+                      id={id}
+                      videoId={videoId}
+                      autoPlay={autoPlay}
+                      raw={raw}
+                    />
+                  )}
+                </div>
+              </Box>
+            </Draggable>
+          ) : (
+            <div className={'wrapper-player'} ref={playerRef}>
+              {videoProvider === YOUTUBE_PROVIDER && (
+                <YoutubeEmbed
+                  id={id}
+                  videoId={videoId}
+                  autoPlay={autoPlay}
+                  raw={raw}
+                />
+              )}
+            </div>
+          )}
+        </>
+      );
+    default:
+      return <span></span>;
+  }
 };
 
 export default Player;

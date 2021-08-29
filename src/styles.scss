@@ -1,0 +1,51 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background: #121214;
+  color: #a8a8b3;
+  font-family: sans-serif;
+}
+
+.container {
+  width: 80%;
+  margin: 3rem auto;
+}
+
+.btn {
+  position: relative;
+  background: #9466ff;
+  color: #FFF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 120px;
+  height: 40px;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-family: sans-serif;
+  user-select: none;
+}
+
+.wrapper-players {
+  margin-top: 2rem;
+}
+
+.players {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px
+}
+
+.title {
+  margin: 1rem 0rem;
+  font-weight: normal;
+}
+
+.subtitle {
+  margin: 1rem 0rem;
+  font-weight: normal;
+}

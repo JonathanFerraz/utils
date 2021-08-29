@@ -10,6 +10,12 @@ export function getYoutubeId(url: string) {
 }
 
 export function getYoutubeThumb(url: string) {
+  if (typeof url !== 'string') {
+    throw new Error(
+      'Error: getYoutubeThumb(string) expects a string argument.'
+    );
+  }
+
   let video, results;
 
   let getThumb = function (url: string) {
@@ -24,4 +30,16 @@ export function getYoutubeThumb(url: string) {
   };
 
   return getThumb(url);
+}
+
+export function getUniqueKey(): string {
+  let keys: string[] = [];
+  let newKey =
+    '__' + String(String(Math.random() * 9999) + String(new Date().getTime()));
+  newKey = newKey.split('.').join('');
+  if (keys.indexOf(newKey) === -1) {
+    keys.push(newKey);
+    return newKey;
+  }
+  return getUniqueKey();
 }
