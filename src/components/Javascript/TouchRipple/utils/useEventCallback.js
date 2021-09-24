@@ -8,5 +8,6 @@ export default function useEventCallback(fn) {
   useEnhancedEffect(() => {
     ref.current = fn;
   });
+  // eslint-disable-next-line no-sequences
   return useCallback((...args) => (0, ref.current)(...args), []);
 }

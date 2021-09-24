@@ -1,5 +1,4 @@
 import React from 'react';
-import capitalizeLetters from '../../../utils/capitalize';
 
 interface TypographyProps {
   children?: React.ReactNode;
@@ -21,9 +20,7 @@ export const Typography: React.FC<TypographyProps> = ({
 
   return (
     <Component className={className} {...other}>
-      {capitalize && typeof children === 'string'
-        ? capitalizeLetters(children)
-        : children}
+      {children}
     </Component>
   );
 };

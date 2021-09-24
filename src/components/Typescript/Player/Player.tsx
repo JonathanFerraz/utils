@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { YoutubeEmbed } from './YoutubeEmbed';
 import urlParser from 'js-video-url-parser';
 import Draggable from 'react-draggable';
@@ -56,10 +56,10 @@ const Player: React.FC<PlayerProps> = ({
   const handleDrag = (e: any, data: any) => {
     setPosition({ x: data.x, y: data.y });
   };
-  const handleStop = () => {
-    setIsControlled(true);
-    setPosition({ x: 0, y: 0 });
-  };
+  // const handleStop = () => {
+  //   setIsControlled(true);
+  //   setPosition({ x: 0, y: 0 });
+  // };
 
   const parserResult = useMemo<PlayerParserResult>(() => {
     return urlParser.parse(url);
