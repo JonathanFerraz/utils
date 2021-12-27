@@ -1,55 +1,29 @@
-import React from 'react';
-import Player from './components/Typescript/Player/Player';
-import { TouchRipple } from './components/Typescript/TouchRipple';
-import Typography from './components/Typescript/Typography';
-
+import React, { useState } from 'react';
+import { data } from './mock';
 import './styles.scss';
+import InputCode from '././components/InputCode';
 
 const App: React.FC = () => {
-  const rippleRef = React.useRef() as any;
+  const [value, setValue] = useState<any>();
+  const mockData = data.dados.numbers.map((e: any) => JSON.stringify(e.test));
+
+  function process(form: any) {
+    var inputs = Array.from(form.elements);
+
+    return inputs.map((e: any) => e.value);
+  }
 
   return (
     <>
       <div className="container">
-        <Typography capitalize component={'h1'} className={'title'}>
-          Efeito Ripple
-        </Typography>
-        <div
-          className="btn"
-          onMouseDown={(e) => {
-            rippleRef?.current?.start(e);
+        <InputCode
+          length={2}
+          maxLength={2}
+          onSubmit={(e: any) => {
+            e.preventDefault();
+            setValue(process(e.target));
           }}
-          onMouseUp={(e) => {
-            rippleRef?.current?.stop(e);
-          }}
-          onMouseLeave={(e) => {
-            rippleRef?.current?.stop(e);
-          }}
-        >
-          Botão
-          <TouchRipple ref={rippleRef} />
-        </div>
-
-        <div className="wrapper-players">
-          <Typography capitalize component={'h1'} className={'title'}>
-            Vídeos
-          </Typography>
-          <Typography capitalize component={'h5'} className={'subtitle'}>
-            Players do youtube. Os players não iram tocar juntos, no momento que
-            um estiver rodando e clicar em outro vídeo, o anterior irá pausar. O
-            primeiro player permite reposicionamento pelo site
-          </Typography>
-          <div className="players">
-            <Player
-              allowPositioning
-              url={'https://www.youtube.com/watch?v=gHGZjv0_bdU'}
-            />
-            <Player url={'https://www.youtube.com/watch?v=Za2a7EPvvLQ'} />
-            <Player
-              url={'https://www.youtube.com/watch?v=sj56h8LuF90&t=10519s'}
-            />
-          </div>
-        </div>
+        />
       </div>
     </>
   );
